@@ -3,29 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="src/style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,400;0,500;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
-    <title>Weather</title>
+    <link rel="stylesheet" href="src/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <title>Meteo App</title>
   </head>
   <body>
     <div class="weather-app">
       <header>
         <form class="search-form" id="search-form">
           <input
-            class="search-form-input"
-            id="search-form-input"
             type="search"
             placeholder="Enter a city.."
             required
-            minlength="2"
+            id="search-form-input"
+            class="search-form-input"
           />
-          <input class="search-form-button" type="submit" value="Search" />
+          <input type="submit" value="Search" class="search-form-button" />
         </form>
       </header>
       <main>
@@ -33,30 +32,32 @@
           <div>
             <h1 class="weather-app-city" id="city"></h1>
             <p class="weather-app-details">
-              <span id="time"></span>
-              <span id="description"></span><br /><strong
-                id="wind-speed"
-              ></strong
-              ><strong id="humidity"></strong>
+              <span id="time"></span>,
+              <span id="description"></span>
+              <br />
+              Humidity: <strong id="humidity"></strong>, Wind:
+              <strong id="wind-speed"></strong>
             </p>
           </div>
-          <div class="weather-app-temprature-container">
+          <div class="weather-app-temperature-container">
             <div id="icon"></div>
-            <div class="weather-app-temprature" id="temperature"></div>
-            <div class="weather-app-unit"></div>     
+            <div class="weather-app-temperature" id="temperature"></div>
+            <div class="weather-app-unit">°C</div>
+          </div>
         </div>
         <div class="weather-forecast" id="forecast"></div>
       </main>
+
       <footer>
-        The project was Coded By
-        <a href="https://github.com/hanaalkadri/Weather" target="_blank">
-          Hana Alkadri</a
+        This project was coded by
+        <a href="https://github.com/matthieua/" target="_blank"> Matt Delac</a>,
+        is
+        <a href="https://github.com/matthieua/meteo" target="_blank"
+          >open-sourced on GitHub</a
         >
-        is<a href="https://github.com/hanaalkadri" target="_blank">
-          open-soursed on github</a
-        >
-        and<a href="https://weatherapphana.netlify.app/" target="_blank">
-          based on Netlify</a
+        and
+        <a href="https://meteo-shecodes-app.netlify.app/" target="_blank"
+          >hosted on Netlify</a
         >
       </footer>
     </div>
