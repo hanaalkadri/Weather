@@ -19,7 +19,7 @@ function refreshWeather(response) {
   windSpeedElement.innerHTML = `${response.data.wind.speed}km/h`;
   temperatureElement.innerHTML = Math.round(temperature);
 
-  // ✅ Save last searched city to localStorage
+
   localStorage.setItem("lastSearchedCity", response.data.city);
 }
 
@@ -86,13 +86,12 @@ displayForecast();
 let searchFormElement = document.querySelector("#search-form");
 searchFormElement.addEventListener("submit", handleSearchSubmit);
 
-// ✅ Load last searched city when the page loads
 window.addEventListener("load", function () {
   let lastCity = localStorage.getItem("lastSearchedCity");
 
   if (lastCity) {
     searchCity(lastCity);
   } else {
-    searchCity("Utrecht"); // ✅ Default city if no previous search
+    searchCity("Utrecht"); 
   }
 });
