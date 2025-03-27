@@ -1,58 +1,91 @@
 class WeatherApp {
   constructor(city) {
     this.city = city;
-    this.apiKey = "b2a5adcct04b33178913oc335f405433"; // API key securely fetched
+    this.apiKey = "b2a5adcct04b33178913oc335f405433";
     this.apiUrl = `https://api.shecodes.io/weather/v1/current?query=${this.city}&key=${this.apiKey}&units=metric`;
     this.forecastUrl = `https://api.shecodes.io/weather/v1/forecast?query=${this.city}&key=${this.apiKey}&units=metric`;
   }
 
-  // Fetch weather data from the API
   async fetchWeatherData() {
-    this.clearError(); // Clear any previous error messages
+    this.clearError();
+    this.clearUI();
+
     try {
       const response = await axios.get(this.apiUrl);
+      const inputCity = this.city.trim().toLowerCase();
+      const apiCity = response.data.city.trim().toLowerCase();
+
+      if (apiCity !== inputCity) {
+        this.displayErrorMessage(
+          "City name is invalid. Please check the name."
+        );
+        return;
+      }
+
       this.displayWeather(response);
       this.fetchForecast();
     } catch (error) {
-      this.displayErrorMessage(
-        "City not found or API error. Please try again."
-      );
+      this.displayErrorMessage("City name is invalid. Please check the name.");
     }
   }
 
-  // Clear the error message from the UI
   clearError() {
     const errorElement = document.querySelector("#error-message");
-    errorElement.style.display = "none"; // Hide the error message initially
+    errorElement.style.display = "none";
   }
 
-  // Display weather information
+  clearUI() {
+    document.querySelector("#temperature").innerHTML = "";
+    document.querySelector("#city").innerHTML = "";
+    document.querySelector("#description").innerHTML = "";
+    document.querySelector("#humidity").innerHTML = "";
+    document.querySelector("#wind-speed").innerHTML = "";
+    document.querySelector("#time").innerHTML = "";
+    document.querySelector("#icon").innerHTML = "";
+    document.querySelector("#forecast").innerHTML = "";
+
+    document.querySelector(".weather-app-data").style.display = "none";
+    document.querySelector("#forecast").style.display = "none";
+  }
+
   displayWeather(response) {
     const { temperature, city, time, condition, wind, humidity } =
       response.data;
-    document.querySelector("#temperature").innerHTML = Math.round(
-      temperature.current
-    );
+
+    document.querySelector(".weather-app-data").style.display = "flex";
+    document.querySelector("#forecast").style.display = "flex";
+
+    document.querySelector("#temperature").innerHTML =
+      typeof temperature?.current === "number"
+        ? Math.round(temperature.current)
+        : "";
+
     document.querySelector("#city").innerHTML = city;
-    document.querySelector("#description").innerHTML = condition.description;
-    document.querySelector("#humidity").innerHTML = `${humidity}%`;
-    document.querySelector("#wind-speed").innerHTML = `${wind.speed}km/h`;
-    document.querySelector("#time").innerHTML = this.formatDate(
-      new Date(time * 1000)
-    );
-    document.querySelector(
-      "#icon"
-    ).innerHTML = `<img src="${condition.icon_url}" class="weather-app-icon" />`;
+    document.querySelector("#description").innerHTML =
+      condition?.description || "";
+
+    document.querySelector("#humidity").innerHTML =
+      typeof humidity === "number" ? `${humidity}%` : "N/A";
+
+    document.querySelector("#wind-speed").innerHTML =
+      typeof wind?.speed === "number" ? `${wind.speed}km/h` : "N/A";
+
+    document.querySelector("#time").innerHTML = time
+      ? this.formatDate(new Date(time * 1000))
+      : "";
+
+    document.querySelector("#icon").innerHTML = condition?.icon_url
+      ? `<img src="${condition.icon_url}" class="weather-app-icon" />`
+      : "";
   }
 
-  // Display the error message
   displayErrorMessage(message) {
     const errorElement = document.querySelector("#error-message");
     errorElement.innerHTML = message;
-    errorElement.style.display = "block"; // Show the error message if an error occurs
+    errorElement.style.display = "block";
+    this.clearUI();
   }
 
-  // Fetch forecast data
   async fetchForecast() {
     try {
       const response = await axios.get(this.forecastUrl);
@@ -62,30 +95,26 @@ class WeatherApp {
     }
   }
 
-  // Display forecast information
   displayForecast(response) {
     let forecastHtml = "";
     if (response.data.daily && response.data.daily.length > 0) {
       response.data.daily.forEach((day, index) => {
         if (index < 6) {
-          forecastHtml += `
-            <div class="weather-forecast-day">
-              <div class="weather-forecast-date">${this.formatDay(
-                day.time
-              )}</div>
-              <div><img src="${
-                day.condition.icon_url
-              }" class="weather-forecast-icon" /></div>
-              <div class="weather-forecast-temperatures">
-                <div class="weather-forecast-temperature"><strong>${Math.round(
-                  day.temperature.maximum
-                )}°</strong></div>
-                <div class="weather-forecast-temperature">${Math.round(
-                  day.temperature.minimum
-                )}°</div>
-              </div>
+          // ⬇️ INLINE forecast blok – voorkomt vertical stacking
+          forecastHtml += `<div class="weather-forecast-day">
+            <div class="weather-forecast-date">${this.formatDay(day.time)}</div>
+            <div><img src="${
+              day.condition.icon_url
+            }" class="weather-forecast-icon" /></div>
+            <div class="weather-forecast-temperatures">
+              <div class="weather-forecast-temperature"><strong>${Math.round(
+                day.temperature.maximum
+              )}°</strong></div>
+              <div class="weather-forecast-temperature">${Math.round(
+                day.temperature.minimum
+              )}°</div>
             </div>
-          `;
+          </div>`;
         }
       });
     } else {
@@ -94,14 +123,12 @@ class WeatherApp {
     document.querySelector("#forecast").innerHTML = forecastHtml;
   }
 
-  // Format the day of the week
   formatDay(timestamp) {
     const date = new Date(timestamp * 1000);
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return days[date.getDay()];
   }
 
-  // Format date to readable format
   formatDate(date) {
     let minutes = date.getMinutes();
     let hours = date.getHours();
@@ -110,16 +137,16 @@ class WeatherApp {
   }
 }
 
-// Event listener for the search button
+// 📍 Event listener op zoekformulier
 document
   .getElementById("search-form")
   .addEventListener("submit", function (event) {
     event.preventDefault();
     let cityInput = document.querySelector("#search-form-input").value;
-    let weatherApp = new WeatherApp(cityInput); // Create a new instance of WeatherApp
-    weatherApp.fetchWeatherData(); // Fetch the weather data
+    let weatherApp = new WeatherApp(cityInput);
+    weatherApp.fetchWeatherData();
   });
 
-// Default city when the page loads
+// 📍 Laad standaardstad
 let weatherApp = new WeatherApp("Paris");
 weatherApp.fetchWeatherData();
